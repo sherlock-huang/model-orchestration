@@ -42,10 +42,21 @@ export class ModelRegistry {
 
   /**
    * Initialize models from environment variables
+   * @throws Error if no models are configured
    */
   static fromEnv(env?: Record<string, string>): ModelRegistry {
     const registry = new ModelRegistry();
     const configs = parseModelsFromEnv(env);
+
+    if (configs.length === 0) {
+      throw new Error(
+        'No models configured. Please configure at least one model:\n' +
+          '  - KIMI_API_KEY for Kimi\n' +
+          '  - MINIMAX_API_KEY for MiniMax\n' +
+          '  - ARK_CODE_API_KEY for Volcengine Ark Code\n' +
+          '  - MODELS_CONFIG (JSON) for custom models'
+      );
+    }
 
     configs.forEach(config => {
       registry.register({

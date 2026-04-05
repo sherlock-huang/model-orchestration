@@ -50,9 +50,12 @@ export const MODEL_PRICING: Record<string, { input: number; output: number }> = 
 
 /**
  * 从环境变量解析模型配置
- * 支持两种方式：
- * 1. 独立配置：KIMI_API_KEY, MINIMAX_API_KEY, ARK_CODE_API_KEY
- * 2. JSON 配置：MODELS_CONFIG (JSON 数组，用于复杂配置)
+ *
+ * 支持两种配置方式，可以单独使用或同时使用：
+ * 1. 独立配置：KIMI_API_KEY, MINIMAX_API_KEY, ARK_CODE_API_KEY（简单方式）
+ * 2. JSON 配置：MODELS_CONFIG（JSON 数组，覆盖同名模型）
+ *
+ * 优先级：JSON 配置 > 独立配置
  */
 export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfig[] {
   const models: ModelConfig[] = [];
@@ -66,10 +69,10 @@ export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfi
   if (env.ANTHROPIC_API_KEY) apiKeys.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY;
   if (env.DEEPSEEK_API_KEY) apiKeys.DEEPSEEK_API_KEY = env.DEEPSEEK_API_KEY;
   if (env.KIMI_API_KEY) apiKeys.KIMI_API_KEY = env.KIMI_API_KEY;
-  if (env.MINIMAX_API_KEY) apiKeys.MINIMAX_API_KEY = apiKeys.MINIMAX_API_KEY;
+  if (env.MINIMAX_API_KEY) apiKeys.MINIMAX_API_KEY = env.MINIMAX_API_KEY;
   if (env.ARK_CODE_API_KEY) apiKeys.ARK_CODE_API_KEY = env.ARK_CODE_API_KEY;
 
-  // Kimi
+  // Kimi (如果配置了 KIMI_API_KEY)
   if (apiKeys.KIMI_API_KEY) {
     models.push({
       name: env.KIMI_MODEL_NAME || 'kimi-pro',
@@ -88,7 +91,7 @@ export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfi
     });
   }
 
-  // Minimax
+  // Minimax (如果配置了 MINIMAX_API_KEY)
   if (apiKeys.MINIMAX_API_KEY) {
     models.push({
       name: env.MINIMAX_MODEL_NAME || 'minimax-abab6.5s-chat',
@@ -96,7 +99,8 @@ export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfi
       api_key: apiKeys.MINIMAX_API_KEY,
       api_endpoint: env.MINIMAX_API_ENDPOINT || 'https://api.minimax.chat/v1',
       capabilities: {
-        max_tokens: 32000ater: {
+        max_tokens: 32000,
+        cost_per_1k_tokens: {
           prompt: MODEL_PRICING['minimax-abab6.5s-chat'].input,
           completion: MODEL_PRICING['minimax-abab6.5s-chat'].output,
         },
@@ -105,7 +109,7 @@ export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfi
     });
   }
 
-  // Volcengine Ark Code
+  // Volcengine Ark Code (如果配置了 ARK_CODE_API_KEY)
   if (apiKeys.ARK_CODE_API_KEY) {
     models.push({
       name: env.ARK_CODE_MODEL_NAME || 'volcengine-plan/ark-code-latest',
@@ -124,7 +128,8 @@ export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfi
     });
   }
 
-  // 方式 2: JSON 配置（优先级更高，覆盖独立配置）
+  // 方式 2: JSON 配置（可选，优先级更高，覆盖独立配置）
+  // 如果配置了 MODELS_CONFIG，会合并到现有模型列表中
   if (env.MODELS_CONFIG) {
     try {
       const customModels = JSON.parse(env.MODELS_CONFIG);
@@ -132,11 +137,13 @@ export function parseModelsFromEnv(env: Record<string, string> = {}): ModelConfi
         // 查找是否已存在同名模型，存在则更新
         const existingIndex = models.findIndex(m => m.name === model.name);
         if (existingIndex >= 0) {
+          console.log(`📝 Updating model from MODELS_CONFIG: ${model.name}`);
           models[existingIndex] = {
             ...models[existingIndex],
             ...model,
           };
         } else {
+          console.log(`➕ Adding model from MODELS_CONFIG: ${model.name}`);
           models.push(model);
         }
       });
