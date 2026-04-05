@@ -2,6 +2,8 @@
 
 > 大模型聚合转发平台 - 根据任务自动分发模型，支持任务拆解和结果聚合
 
+<!-- Last updated: 2026-04-05 -->
+
 ## 项目代号
 
 项目代号：MOP（Model Orchestration Platform）
