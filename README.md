@@ -23,29 +23,33 @@
 
 ## 快速开始
 
-### 安装依赖
+### 本地开发（Express 版本）
 
 ```bash
+# 安装依赖
 npm install
-```
 
-### 开发模式
-
-```bash
+# 开发模式
 npm run dev
-```
 
-### 构建
-
-```bash
+# 构建
 npm run build
-```
 
-### 运行测试
-
-```bash
+# 运行测试
 npm test
 ```
+
+### Cloudflare Pages 部署
+
+```bash
+# 本地 Cloudflare Functions 开发
+npm run pages:dev
+
+# 部署到 Cloudflare Pages
+npm run pages:deploy
+```
+
+详细部署指南见：[CLOUDFLARE_DEPLOY.md](./CLOUDFLARE_DEPLOY.md)
 
 ## API 接口
 
