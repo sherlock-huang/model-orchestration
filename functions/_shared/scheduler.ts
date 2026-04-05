@@ -1,7 +1,7 @@
 // Task Scheduler - Execute tasks according to DAG (Cloudflare Functions compatible)
 
-import { DAG, Task, ModelBreakdown } from '../_shared/types';
-import { ModelRegistry, ModelResult } from '../_shared/registry';
+import { DAG, Task, ModelBreakdown } from './types';
+import { ModelRegistry, ModelResult } from './registry';
 
 /**
  * Scheduler output
@@ -48,7 +48,6 @@ export class TaskScheduler {
 
         console.log(`   ✅ Task ${task.id} completed`);
       } catch (error) {
-) => {
         console.error(`   ❌ Task ${task.id} failed:`, error);
         throw error;
       }
@@ -109,7 +108,7 @@ export class TaskScheduler {
   }
 
   /**
-   * Update model breakdown
+   * Update Update model breakdown
    */
   private updateModelBreakdown(
     modelBreakdown: Map<string, ModelBreakdown>,
