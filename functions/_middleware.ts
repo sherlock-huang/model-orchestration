@@ -1,7 +1,12 @@
-// Simple index page for Cloudflare Pages
-export async function onRequest() {
-  return new Response(
-    `<!DOCTYPE html>
+// Middleware: handle root path, let /api/* routes through
+export async function onRequest(context: any) {
+  const url = new URL(context.request.url);
+  const path = url.pathname;
+
+  // Only handle root path, let /api/* routes pass through to their handlers
+  if (path === '/') {
+    return new Response(
+      `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -82,10 +87,14 @@ export async function onRequest() {
   <p>See <a href="https://github.com/sherlock-huang/model-orchestration" target="_blank">GitHub Repository</a> for full documentation.</p>
 </body>
 </html>`,
-    {
-      headers: {
-        'Content-Type': 'text/html; charset=utf-8',
-      },
-    }
-  );
+      {
+        headers: {
+          'Content-Type': 'text/html; charset=utf-8',
+        },
+      }
+    );
+  }
+
+  // Let all other paths pass through to their handlers
+  return context.next();
 }

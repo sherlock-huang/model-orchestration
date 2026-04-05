@@ -4,6 +4,4 @@ compatibility_flags = ["nodejs_compat"]
 
 [pages]
 build_output_dir = "./"
-
-[[pages.functions]]
-path = "/functions/*"
+functions_folder = "functions"
