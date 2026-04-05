@@ -21,7 +21,7 @@ export async function onRequest(context: RequestContext) {
     console.error('Failed to initialize models:', error.message);
     return Response.json(
       { error: 'Failed to initialize models', message: error.message },
-      { { status: 500 }
+      { status: 500 }
     );
   }
 }
