@@ -81,7 +81,7 @@ export interface CostAnalysis {
  */
 export interface ModelRegistration {
   name: string;
-  provider: 'openai' | 'anthropic' | 'google' | 'custom';
+  provider: 'openai' | 'anthropic' | 'google' | 'custom' | 'moonshot' | 'minimax' | 'volcengine';
   api_key: string;
   api_endpoint?: string;
   capabilities: ModelCapabilities;
